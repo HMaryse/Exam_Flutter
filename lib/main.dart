@@ -4,13 +4,43 @@ import 'package:provider/provider.dart';
 import 'core/theme/app_theme.dart';
 import 'providers/wallet_provider.dart';
 import 'features/auth/screens/splash_screen.dart';
+import 'providers/transfer_provider.dart';
+import 'providers/bill_provider.dart';
+import 'providers/history_provider.dart';
 
 void main() {
   runApp(
+    MultiProvider(
+
+  providers: [
+
     ChangeNotifierProvider(
+
       create: (_) => WalletProvider(),
-      child: const BadWalletApp(),
+
     ),
+
+    ChangeNotifierProvider(
+
+      create: (_) => TransferProvider(),
+
+    ),
+    ChangeNotifierProvider(
+
+  create: (_) => BillProvider(),
+
+),
+ChangeNotifierProvider(
+
+  create: (_) => HistoryProvider(),
+
+),
+
+  ],
+
+  child: const BadWalletApp(),
+
+)
   );
 }
 
