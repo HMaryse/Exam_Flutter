@@ -13,6 +13,8 @@ class WalletProvider extends ChangeNotifier {
 
   String? error;
 
+  String? currentPhone;
+
   Future<bool> login(String phone) async {
 
     loading = true;
@@ -23,10 +25,14 @@ class WalletProvider extends ChangeNotifier {
 
     try {
 
+      currentPhone = phone;
+
       wallet = await _api.login(phone);
 
       wallet = wallet!.copyWith(
+
         balance: await _api.getBalance(phone),
+
       );
 
       loading = false;
@@ -46,6 +52,66 @@ class WalletProvider extends ChangeNotifier {
       return false;
 
     }
+
+  }
+
+  Future<void> refreshBalance() async {
+
+    if (currentPhone == null || wallet == null) {
+
+      return;
+
+    }
+
+    try {
+
+      final balance = await _api.getBalance(currentPhone!);
+
+      wallet = wallet!.copyWith(
+
+        balance: balance,
+
+      );
+
+      notifyListeners();
+
+    } catch (_) {}
+
+  }
+
+  Future<void> refreshWallet() async {
+
+    if (currentPhone == null) {
+
+      return;
+
+    }
+
+    try {
+
+      wallet = await _api.login(currentPhone!);
+
+      wallet = wallet!.copyWith(
+
+        balance: await _api.getBalance(currentPhone!),
+
+      );
+
+      notifyListeners();
+
+    } catch (_) {}
+
+  }
+
+  void logout() {
+
+    wallet = null;
+
+    currentPhone = null;
+
+    error = null;
+
+    notifyListeners();
 
   }
 
